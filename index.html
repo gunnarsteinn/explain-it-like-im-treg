@@ -170,7 +170,32 @@ select {
 footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14px; color: var(--fg-3); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 footer a { color: var(--fg-2); }
 
+/* Diagram */
+.diagram { margin: 24px 0 0; display: grid; gap: 16px; }
+.diagram .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 16px; }
+.diagram svg { display: block; width: 100%; min-width: 720px; height: auto; }
+.diagram text { font-family: var(--font); }
+.d-band-dev { fill: var(--dev-bg); } .d-band-test { fill: var(--test-bg); } .d-band-prod { fill: var(--prod-bg); }
+.d-env-dev { fill: var(--dev-fg); } .d-env-test { fill: var(--test-fg); } .d-env-prod { fill: var(--prod-fg); }
+.d-box { fill: var(--surface); stroke: var(--line); stroke-width: 1; }
+.d-h { fill: var(--fg-3); font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.d-t { fill: var(--fg); font-size: 15px; font-weight: 600; }
+.d-big { fill: var(--fg); font: 600 24px var(--mono); }
+.d-mono { fill: var(--fg); font: 500 14px var(--mono); }
+.d-s { fill: var(--fg-2); font-size: 12px; }
+.d-tag { font: 500 11px var(--mono); }
+.d-op { fill: var(--fg-3); font-size: 22px; font-weight: 500; }
+.d-run { stroke: var(--fg-2); stroke-width: 1.5; fill: none; }
+.d-run-l { fill: var(--fg-2); font: 500 11px var(--mono); }
+.d-deploy { stroke: var(--accent); stroke-width: 2; fill: none; }
+.d-deploy-l { fill: var(--eyebrow); font: 600 11px var(--mono); }
+.d-ah-run { fill: var(--fg-2); } .d-ah-deploy { fill: var(--accent); }
+.keys { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.keys li { font-size: 14px; color: var(--fg-2); min-width: 0; }
+.keys b { display: block; color: var(--fg); font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+
 @media (max-width: 760px) {
+  .keys { grid-template-columns: minmax(0, 1fr); }
   .lanes { grid-template-columns: minmax(0, 1fr); }
   .runtask { grid-template-columns: minmax(0, 1fr); }
   .runtask-form { border-right: 0; border-bottom: 1px solid var(--line); }
@@ -251,6 +276,106 @@ footer a { color: var(--fg-2); }
         </div>
       </li>
     </ol>
+  </section>
+
+  <!-- Diagram -->
+  <section class="col" style="max-width:none" aria-labelledby="diag-h">
+    <p class="eyebrow is">Svona tengist þetta</p>
+    <p class="eyebrow en">How it fits together</p>
+    <h2 id="diag-h"><span class="is">Útgáfa + tengistrengur = keyrsla</span><span class="en">Version + connection = run</span></h2>
+    <p class="muted is">Hver lína er eitt umhverfi. Þegar þú keyrir velurðu eina línu með UAT, og bara sú lína keyrir.</p>
+    <p class="muted en">Each row is one environment. When you run, the UAT picks one row, and only that row runs.</p>
+
+    <figure class="diagram">
+      <div class="scroll">
+        <svg viewBox="0 0 900 380" role="img" aria-labelledby="diag-title">
+          <title id="diag-title">Each environment pairs its own rule version with its own data provider connection string; a run in that environment creates exceptions there. Deploy copies the Development version to Testing and Production.</title>
+          <defs>
+            <marker id="ah-run" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-ah-run" d="M0,0 L10,5 L0,10 z"/></marker>
+            <marker id="ah-deploy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-ah-deploy" d="M0,0 L10,5 L0,10 z"/></marker>
+          </defs>
+
+          <!-- column headers -->
+          <text class="d-h" x="285" y="30" text-anchor="middle"><tspan class="is">Útgáfa eftirlits</tspan><tspan class="en">Rule version</tspan></text>
+          <text class="d-h" x="525" y="30" text-anchor="middle"><tspan class="is">Tengistrengur</tspan><tspan class="en">Connection string</tspan></text>
+          <text class="d-h" x="787" y="30" text-anchor="middle"><tspan class="is">Frávik</tspan><tspan class="en">Exceptions</tspan></text>
+
+          <!-- bands -->
+          <rect class="d-band-dev"  x="0" y="46"  width="900" height="100" rx="5"/>
+          <rect class="d-band-test" x="0" y="156" width="900" height="100" rx="5"/>
+          <rect class="d-band-prod" x="0" y="266" width="900" height="100" rx="5"/>
+
+          <!-- env labels -->
+          <text class="d-t d-env-dev"  x="20" y="92">Development</text>
+          <text class="d-tag d-env-dev"  x="20" y="112">UAT = Development</text>
+          <text class="d-t d-env-test" x="20" y="202">Testing</text>
+          <text class="d-tag d-env-test" x="20" y="222">UAT = Testing</text>
+          <text class="d-t d-env-prod" x="20" y="312">Production</text>
+          <text class="d-tag d-env-prod" x="20" y="332">UAT = Production</text>
+
+          <!-- rule version boxes -->
+          <rect class="d-box" x="210" y="64"  width="150" height="64" rx="5"/>
+          <text class="d-big" x="285" y="98" text-anchor="middle">v5</text>
+          <text class="d-s" x="285" y="117" text-anchor="middle"><tspan class="is">vistað hér</tspan><tspan class="en">saved here</tspan></text>
+          <rect class="d-box" x="210" y="174" width="150" height="64" rx="5"/>
+          <text class="d-big" x="285" y="208" text-anchor="middle">v4</text>
+          <text class="d-s" x="285" y="227" text-anchor="middle"><tspan class="is">afrit frá Dev</tspan><tspan class="en">copy from Dev</tspan></text>
+          <rect class="d-box" x="210" y="284" width="150" height="64" rx="5"/>
+          <text class="d-big" x="285" y="318" text-anchor="middle">v3</text>
+          <text class="d-s" x="285" y="337" text-anchor="middle"><tspan class="is">afrit frá Dev</tspan><tspan class="en">copy from Dev</tspan></text>
+
+          <!-- deploy arrows -->
+          <path class="d-deploy" d="M210,88 C150,88 150,198 206,198" marker-end="url(#ah-deploy)"/>
+          <path class="d-deploy" d="M210,104 C125,104 125,308 206,308" marker-end="url(#ah-deploy)"/>
+          <text class="d-deploy-l" x="160" y="155" text-anchor="end">deploy</text>
+
+          <!-- plus signs -->
+          <text class="d-op" x="395" y="104" text-anchor="middle">+</text>
+          <text class="d-op" x="395" y="214" text-anchor="middle">+</text>
+          <text class="d-op" x="395" y="324" text-anchor="middle">+</text>
+
+          <!-- connection boxes -->
+          <rect class="d-box" x="430" y="64"  width="190" height="64" rx="5"/>
+          <text class="d-mono" x="525" y="96" text-anchor="middle">sql-dev-01</text>
+          <text class="d-s" x="525" y="116" text-anchor="middle"><tspan class="is">Sölugögn · Dev</tspan><tspan class="en">Sales data · Dev</tspan></text>
+          <rect class="d-box" x="430" y="174" width="190" height="64" rx="5"/>
+          <text class="d-mono" x="525" y="206" text-anchor="middle">sql-test-01</text>
+          <text class="d-s" x="525" y="226" text-anchor="middle"><tspan class="is">Sölugögn · Test</tspan><tspan class="en">Sales data · Test</tspan></text>
+          <rect class="d-box" x="430" y="284" width="190" height="64" rx="5"/>
+          <text class="d-mono" x="525" y="316" text-anchor="middle">sql-prod-01</text>
+          <text class="d-s" x="525" y="336" text-anchor="middle"><tspan class="is">Sölugögn · Prod</tspan><tspan class="en">Sales data · Prod</tspan></text>
+
+          <!-- run arrows -->
+          <path class="d-run" d="M622,96 L689,96" marker-end="url(#ah-run)"/>
+          <text class="d-run-l" x="655" y="87" text-anchor="middle"><tspan class="is">keyrsla</tspan><tspan class="en">run</tspan></text>
+          <path class="d-run" d="M622,206 L689,206" marker-end="url(#ah-run)"/>
+          <text class="d-run-l" x="655" y="197" text-anchor="middle"><tspan class="is">keyrsla</tspan><tspan class="en">run</tspan></text>
+          <path class="d-run" d="M622,316 L689,316" marker-end="url(#ah-run)"/>
+          <text class="d-run-l" x="655" y="307" text-anchor="middle"><tspan class="is">keyrsla</tspan><tspan class="en">run</tspan></text>
+
+          <!-- exception boxes -->
+          <rect class="d-box" x="695" y="64"  width="185" height="64" rx="5"/>
+          <text class="d-t" x="787" y="94" text-anchor="middle"><tspan class="is">Dev-frávik</tspan><tspan class="en">Dev exceptions</tspan></text>
+          <text class="d-s" x="787" y="114" text-anchor="middle">v5 + sql-dev-01</text>
+          <rect class="d-box" x="695" y="174" width="185" height="64" rx="5"/>
+          <text class="d-t" x="787" y="204" text-anchor="middle"><tspan class="is">Test-frávik</tspan><tspan class="en">Test exceptions</tspan></text>
+          <text class="d-s" x="787" y="224" text-anchor="middle">v4 + sql-test-01</text>
+          <rect class="d-box" x="695" y="284" width="185" height="64" rx="5"/>
+          <text class="d-t" x="787" y="314" text-anchor="middle"><tspan class="is">Prod-frávik</tspan><tspan class="en">Prod exceptions</tspan></text>
+          <text class="d-s" x="787" y="334" text-anchor="middle">v3 + sql-prod-01</text>
+        </svg>
+      </div>
+      <figcaption>
+        <ul class="keys">
+          <li class="is"><b>Útgáfan færist bara með deploy</b>Deploy afritar Dev-útgáfuna niður í Test eða Prod. Ekkert annað breytir útgáfunni þar.</li>
+          <li class="en"><b>Versions only move by deploy</b>Deploy copies the Dev version down to Test or Prod. Nothing else changes the version there.</li>
+          <li class="is"><b>Tengistrengurinn fylgir umhverfinu</b>Hann er stilltur á data providernum, ekki á eftirlitinu. Ef þú breytir honum þarf ekki að deploya.</li>
+          <li class="en"><b>The connection belongs to the environment</b>It's set on the data provider, not on the rule. Changing it needs no deploy.</li>
+          <li class="is"><b>Frávikin verða til í sömu línu</b>Prod-keyrsla notar v3 og sql-prod-01 og býr til Prod-frávik. Hinar línurnar breytast ekki.</li>
+          <li class="en"><b>Exceptions land in the same row</b>A Prod run uses v3 and sql-prod-01 and creates Prod exceptions. The other rows don't change.</li>
+        </ul>
+      </figcaption>
+    </figure>
   </section>
 
   <!-- Simulator -->
